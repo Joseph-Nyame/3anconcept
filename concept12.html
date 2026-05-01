@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept 12 - Rugged Outdoors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #2a3328;
+            --text: #ecd8b7;
+            --accent: #da5b34;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'PT Sans', sans-serif;
+        }
+
+        .header {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .logo { font-family: 'Oswald', sans-serif; font-size: 2.5rem; text-transform: uppercase; font-weight: 700; color: white;}
+
+        .hero-banner {
+            height: 80vh;
+            background-image: linear-gradient(rgba(42, 51, 40, 0.4), rgba(42, 51, 40, 0.9)), url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1600&h=1000&fit=crop');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding: 4rem;
+        }
+
+        h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 6rem;
+            text-transform: uppercase;
+            line-height: 1;
+            margin: 0;
+            color: white;
+            max-width: 800px;
+        }
+        
+        h1 span { color: var(--accent); }
+
+        .search-bar {
+            background: white;
+            padding: 2rem;
+            margin: -4rem 4rem 0;
+            position: relative;
+            z-index: 20;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            color: black;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group label { font-family: 'Oswald'; text-transform: uppercase; font-weight: 700; color: #666; margin-bottom: 0.5rem;}
+        .input-group input { border: none; border-bottom: 2px solid #ddd; padding: 0.5rem 0; font-size: 1.1rem; outline: none; }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">OffGrid</div>
+    </header>
+
+    <div class="hero-banner">
+        <h1>Leave the <span>pavement</span> behind.</h1>
+    </div>
+
+    <div class="search-bar">
+        <div class="input-group">
+            <label>Pick-up Location</label>
+            <input type="text" value="Denver, CO">
+        </div>
+        <div class="input-group">
+            <label>Dates</label>
+            <input type="text" value="Oct 12 - Oct 19">
+        </div>
+        <div class="input-group">
+            <label>Vehicle Type</label>
+            <input type="text" value="4x4 SUV">
+        </div>
+        <button class="btn">Find Vehicle</button>
+    </div>
+</body>
+</html>

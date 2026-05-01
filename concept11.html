@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept 11 - Vibrant EV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1a1b1f;
+            --text: #ffffff;
+            --neon: #ccff00;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        nav {
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 2rem;
+            text-transform: uppercase;
+            font-style: italic;
+        }
+        
+        .logo span { color: var(--neon); }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            min-height: 80vh;
+            align-items: center;
+            padding: 0 4rem;
+        }
+
+        h1 {
+            font-size: 6rem;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 span {
+            color: transparent;
+            -webkit-text-stroke: 2px var(--neon);
+        }
+
+        .car-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .slanted-bg {
+            position: absolute;
+            top: -10%;
+            bottom: -10%;
+            right: -20%;
+            width: 100%;
+            background: var(--neon);
+            transform: skewX(-15deg);
+            z-index: 0;
+        }
+
+        .car-img {
+            position: relative;
+            z-index: 1;
+            width: 120%;
+            margin-left: -10%;
+            transform: scaleX(-1); /* Flips image for directional flow */
+        }
+
+        .cta-btn {
+            background: var(--neon);
+            color: var(--bg);
+            padding: 1.5rem 3rem;
+            text-decoration: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            display: inline-block;
+            margin-top: 3rem;
+            transform: skewX(-10deg);
+            transition: all 0.2s;
+        }
+
+        .cta-btn div {
+            transform: skewX(10deg);
+        }
+
+        .cta-btn:hover {
+            background: white;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Volt<span>⚡</span></div>
+        <div style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--neon);">100% Electric</div>
+    </nav>
+
+    <div class="hero">
+        <div>
+            <h1>Pure<br><span>Energy.</span></h1>
+            <p style="font-size: 1.2rem; max-width: 400px; margin-top: 2rem; color: #a0a0a0;">Rent the fastest electric vehicles on the planet. Zero emissions, infinite thrills.</p>
+            <a href="#" class="cta-btn"><div>Start Engine</div></a>
+        </div>
+        <div class="car-container">
+            <div class="slanted-bg"></div>
+            <!-- Standard Car Image from Unsplash with transparent look possible, but a standard high quality photo works in skewed shapes too -->
+            <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?w=1200&h=800&fit=crop" class="car-img" style="border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);" alt="EV Car">
+        </div>
+    </div>
+</body>
+</html>

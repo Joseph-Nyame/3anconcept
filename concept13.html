@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept 13 - Split Screen</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+
+        .left {
+            flex: 1;
+            background: #4f46e5;
+            color: white;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin: 0;
+            letter-spacing: -1.5px;
+        }
+
+        .booking-form {
+            background: white;
+            color: black;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .booking-form h3 { margin-top: 0; font-size: 1.5rem; }
+        
+        .booking-form input {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .booking-form button {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .right {
+            flex: 1.2;
+            overflow-y: scroll;
+            padding: 2rem;
+            background: #f3f4f6;
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .car-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .car-info {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .car-info h4 { margin: 0; font-size: 1.5rem; }
+        .price { font-size: 1.25rem; font-weight: bold; color: #4f46e5; }
+    </style>
+</head>
+<body>
+    <div class="left">
+        <div>
+            <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 4rem;">Onyx Rentals</h2>
+            <h1>Find your<br>perfect drive.</h1>
+            <p style="font-size: 1.2rem; opacity: 0.9; margin-top: 1rem;">Premium vehicles for any occasion, delivered straight to your door.</p>
+        </div>
+        
+        <div class="booking-form">
+            <h3>Quick Search</h3>
+            <input type="text" placeholder="Location">
+            <input type="text" placeholder="Dates">
+            <button>Search Vehicles</button>
+        </div>
+    </div>
+    
+    <div class="right">
+        <div class="car-card">
+            <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=800&h=600&fit=crop" alt="Car 1">
+            <div class="car-info">
+                <div>
+                    <h4>Mercedes GT</h4>
+                    <p style="margin: 5px 0 0; color: #666;">Sports Coupe</p>
+                </div>
+                <div class="price">$450/day</div>
+            </div>
+        </div>
+        
+        <div class="car-card">
+            <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop" alt="Car 2">
+            <div class="car-info">
+                <div>
+                    <h4>Audi RS e-tron</h4>
+                    <p style="margin: 5px 0 0; color: #666;">Electric Sedan</p>
+                </div>
+                <div class="price">$320/day</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
