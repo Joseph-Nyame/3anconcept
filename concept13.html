@@ -92,6 +92,12 @@
 
         .car-info h4 { margin: 0; font-size: 1.5rem; }
         .price { font-size: 1.25rem; font-weight: bold; color: #4f46e5; }
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: auto; overflow: visible; }
+            .left { padding: 2rem 5%; flex: none; height: auto; }
+            h1 { font-size: 2.5rem; }
+            .right { padding: 1.5rem 5%; overflow-y: visible; flex: none; }
+        }
     </style>
 </head>
 <body>
