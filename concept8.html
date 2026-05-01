@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreeanCompany — The Fleet Constellation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --space: #05040a;
+            --space-deep: #030208;
+            --star: #e8e4f0;
+            --star-dim: #5a5470;
+            --violet: #a78bfa;
+            --violet-soft: rgba(167, 139, 250, 0.3);
+            --pink: #ff8ec7;
+            --cyan: #7ee8fa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--space);
+            color: var(--star);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Starfield canvas */
+        #starfield {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* UI Layer */
+        .ui-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .ui-layer > * {
+            pointer-events: auto;
+        }
+
+        /* Header */
+        .star-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 3vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, var(--space) 0%, transparent 100%);
+        }
+
+        .star-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .star-logo em {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--violet);
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .star-nav {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .star-nav a {
+            color: var(--star-dim);
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .star-nav a:hover {
+            color: var(--violet);
+        }
+
+        /* Constellation info panel */
+        .info-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            bottom: 0;
+            width: 380px;
+            background: rgba(5, 4, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(167, 139, 250, 0.1);
+            padding: 6rem 2.5rem 2rem;
+            transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 20;
+        }
+
+        .info-panel.open {
+            right: 0;
+        }
+
+        .info-panel .close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--star-dim);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--star-dim);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .info-panel .close:hover {
+            border-color: var(--violet);
+            color: var(--violet);
+            transform: rotate(90deg);
+        }
+
+        .info-panel .constellation-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-panel .star-type {
+            font-size: 0.75rem;
+            color: var(--star-dim);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .info-panel .star-desc {
+            font-size: 0.95rem;
+            color: var(--star-dim);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .info-panel .star-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--violet);
+            margin-bottom: 0.3rem;
+        }
+
+        .info-panel .star-price span {
+            font-size: 1rem;
+            color: var(--star-dim);
+        }
+
+        .info-panel .reserve-star {
+            width: 100%;
+            padding: 1rem;
+            background: var(--violet);
+            color: var(--space);
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+
+        .reserve-star:hover {
+            background: var(--star);
+            transform: translateY(-2px);
+        }
+
+        /* Bottom legend */
+        .star-legend {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 3vw;
+            background: linear-gradient(to top, var(--space) 0%, transparent 100%);
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.75rem;
+            color: var(--star-dim);
+            letter-spacing: 1px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.violet { background: var(--violet); box-shadow: 0 0 10px var(--violet-soft); }
+        .legend-dot.pink { background: var(--pink); }
+        .legend-dot.cyan { background: var(--cyan); }
+
+        /* Hint */
+        .star-hint {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        .star-hint.hidden {
+            opacity: 0;
+        }
+
+        .star-hint p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--star-dim);
+            letter-spacing: 1px;
+        }
+
+        .star-hint .drag-icon {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--star-dim);
+            border-radius: 50%;
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: dragHint 2s ease-in-out infinite;
+        }
+
+        @keyframes dragHint {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 768px) {
+            .info-panel { width: 100%; right: -100%; }
+            .star-nav { display: none; }
+            .star-legend { gap: 1rem; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <div class="ui-layer">
+        <header class="star-header">
+            <div class="star-logo">Threean<em>Company</em></div>
+            <ul class="star-nav">
+                <li><a href="#" onclick="resetView()">Reset View</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </header>
+
+        <div class="star-hint" id="hint">
+            <div class="drag-icon">↔</div>
+            <p>Drag to explore the fleet constellation</p>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            <div class="close" onclick="closePanel()">×</div>
+            <div class="constellation-name" id="panelName">Mercedes S-Class</div>
+            <div class="star-type" id="panelType">Luxury Sedan</div>
+            <div class="star-desc" id="panelDesc">A beacon of executive comfort. The S-Class represents the pinnacle of German automotive engineering, offering unparalleled refinement.</div>
+            <div class="star-price" id="panelPrice">$189 <span>/ day</span></div>
+            <button class="reserve-star">Reserve This Star</button>
+        </div>
+
+        <div class="star-legend">
+            <div class="legend-item">
+                <div class="legend-dot violet"></div>
+                <span>Luxury Sedans</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot pink"></div>
+                <span>Premium SUVs</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot cyan"></div>
+                <span>Sports Coupes</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let offsetX = 0, offsetY = 0;
+        let isDragging = false;
+        let lastX, lastY;
+        let scale = 1;
+
+        // Vehicle stars data
+        const vehicles = [
+            { x: 200, y: 300, name: "Mercedes S-Class", type: "Luxury Sedan", price: "$189", desc: "A beacon of executive comfort. The S-Class represents the pinnacle of German automotive engineering.", color: "#a78bfa", category: "sedan" },
+            { x: 500, y: 200, name: "BMW 7 Series", type: "Luxury Sedan", price: "$210", desc: "Precision engineering meets executive luxury. The 7 Series commands respect on every road.", color: "#a78bfa", category: "sedan" },
+            { x: 350, y: 500, name: "Audi A8", type: "Luxury Sedan", price: "$195", desc: "Understated elegance with Quattro confidence. The A8 is for those who lead quietly.", color: "#a78bfa", category: "sedan" },
+            { x: 800, y: 350, name: "Range Rover Sport", type: "Premium SUV", price: "$245", desc: "British aristocracy meets off-road capability. The Range Rover dominates every terrain with grace.", color: "#ff8ec7", category: "suv" },
+            { x: 700, y: 600, name: "Porsche Cayenne", type: "Premium SUV", price: "$280", desc: "Sports car DNA in SUV form. The Cayenne defies categorization.", color: "#ff8ec7", category: "suv" },
+            { x: 1000, y: 200, name: "Lexus LX", type: "Premium SUV", price: "$220", desc: "Japanese perfectionism in full-size luxury. The LX is reliability elevated to art.", color: "#ff8ec7", category: "suv" },
+            { x: 1100, y: 500, name: "Porsche 911", type: "Sports Coupe", price: "$399", desc: "The eternal star of the automotive galaxy. The 911 is not just a car — it is a legend.", color: "#7ee8fa", category: "sports" },
+            { x: 1300, y: 300, name: "Mercedes AMG GT", type: "Sports Coupe", price: "$350", desc: "Aggressive beauty with thunderous power. The AMG GT is a supernova of performance.", color: "#7ee8fa", category: "sports" },
+            { x: 1400, y: 600, name: "BMW M8", type: "Sports Coupe", price: "$320", desc: "Bavarian muscle wrapped in carbon fiber. The M8 is precision weaponized.", color: "#7ee8fa", category: "sports" }
+        ];
+
+        // Constellation lines (connections between same category)
+        const connections = [];
+        vehicles.forEach((v, i) => {
+            vehicles.forEach((v2, j) => {
+                if (i < j && v.category === v2.category) {
+                    connections.push({ from: v, to: v2, color: v.color });
+                }
+            });
+        });
+
+        // Background stars
+        const bgStars = [];
+        for (let i = 0; i < 300; i++) {
+            bgStars.push({
+                x: Math.random() * 3000,
+                y: Math.random() * 2000,
+                size: Math.random() * 2,
+                opacity: Math.random() * 0.5 + 0.1,
+                twinkle: Math.random() * Math.PI * 2
+            });
+        }
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function draw() {
+            ctx.fillStyle = '#05040a';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.save();
+            ctx.translate(width/2 + offsetX, height/2 + offsetY);
+            ctx.scale(scale, scale);
+
+            // Draw background stars
+            bgStars.forEach(star => {
+                star.twinkle += 0.02;
+                const opacity = star.opacity * (0.7 + 0.3 * Math.sin(star.twinkle));
+                ctx.beginPath();
+                ctx.arc(star.x - 1500, star.y - 1000, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(232, 228, 240, ${opacity})`;
+                ctx.fill();
+            });
+
+            // Draw constellation lines
+            connections.forEach(conn => {
+                ctx.beginPath();
+                ctx.moveTo(conn.from.x - 1000, conn.from.y - 500);
+                ctx.lineTo(conn.to.x - 1000, conn.to.y - 500);
+                ctx.strokeStyle = `rgba(${hexToRgb(conn.color)}, 0.15)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            // Draw vehicle stars
+            vehicles.forEach(v => {
+                const x = v.x - 1000;
+                const y = v.y - 500;
+
+                // Glow
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, 40);
+                gradient.addColorStop(0, v.color + '40');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, 40, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Star
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = v.color;
+                ctx.fill();
+
+                // Inner bright
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+
+                // Label (only when zoomed or close)
+                if (scale > 0.8) {
+                    ctx.font = '300 12px Inter';
+                    ctx.fillStyle = 'rgba(232, 228, 240, 0.6)';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(v.name, x, y + 25);
+                }
+            });
+
+            ctx.restore();
+            requestAnimationFrame(draw);
+        }
+
+        function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `${r}, ${g}, ${b}`;
+        }
+
+        // Interaction
+        canvas.addEventListener('mousedown', e => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            document.getElementById('hint').classList.add('hidden');
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            offsetX += e.clientX - lastX;
+            offsetY += e.clientY - lastY;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+
+        // Click to select
+        canvas.addEventListener('click', e => {
+            if (isDragging) return;
+            const rect = canvas.getBoundingClientRect();
+            const clickX = (e.clientX - rect.left - width/2 - offsetX) / scale + 1000;
+            const clickY = (e.clientY - rect.top - height/2 - offsetY) / scale + 500;
+
+            vehicles.forEach(v => {
+                const dist = Math.sqrt((clickX - v.x)**2 + (clickY - v.y)**2);
+                if (dist < 30) {
+                    openPanel(v);
+                }
+            });
+        });
+
+        // Touch support
+        canvas.addEventListener('touchstart', e => {
+            isDragging = true;
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+            document.getElementById('hint').classList.add('hidden');
+        });
+
+        canvas.addEventListener('touchmove', e => {
+            if (!isDragging) return;
+            offsetX += e.touches[0].clientX - lastX;
+            offsetY += e.touches[0].clientY - lastY;
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('touchend', () => isDragging = false);
+
+        // Panel functions
+        function openPanel(v) {
+            document.getElementById('panelName').textContent = v.name;
+            document.getElementById('panelType').textContent = v.type;
+            document.getElementById('panelDesc').textContent = v.desc;
+            document.getElementById('panelPrice').innerHTML = v.price + ' <span>/ day</span>';
+            document.getElementById('infoPanel').classList.add('open');
+        }
+
+        function closePanel() {
+            document.getElementById('infoPanel').classList.remove('open');
+        }
+
+        function resetView() {
+            offsetX = 0;
+            offsetY = 0;
+            scale = 1;
+        }
+
+        // Zoom with wheel
+        canvas.addEventListener('wheel', e => {
+            e.preventDefault();
+            scale += e.deltaY * -0.001;
+            scale = Math.min(Math.max(0.5, scale), 2);
+        });
+
+        draw();
+    </script>
+
+</body>
+</html>

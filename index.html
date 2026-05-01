@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Concepts Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0c10;
+            --surface: #161620;
+            --surface-hover: #1e1e2d;
+            --text: #e8e4f0;
+            --text-faint: #a098b0;
+            --accent: #9b87d4;
+            --accent-glow: rgba(155, 135, 212, 0.2);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 4rem 2rem;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.25rem;
+            color: var(--text-faint);
+            margin: 0;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 160px;
+            z-index: 1;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 40px var(--accent-glow);
+            background-color: var(--surface-hover);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card:hover h2, .card:hover .arrow {
+            color: var(--accent);
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--text-faint);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .arrow {
+            transition: transform 0.3s ease, color 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .card:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* Ambient background glow */
+        .ambient-glow {
+            position: fixed;
+            top: -20vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80vw;
+            height: 50vh;
+            background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+            filter: blur(80px);
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    <div class="container">
+        <header>
+            <h1>Design Concepts</h1>
+            <p>Explore the different UI/UX iterations for the Premium Vehicle Rental application.</p>
+        </header>
+
+        <div class="grid">
+            <a href="concept1.html" class="card">
+                <div>
+                    <h2>Concept 1 <span class="arrow">→</span></h2>
+                    <p>Initial design exploration with core layout principles.</p>
+                </div>
+            </a>
+            
+            <a href="concept2.html" class="card">
+                <div>
+                    <h2>Concept 2 <span class="arrow">→</span></h2>
+                    <p>Refined aesthetics with updated typography and spacing.</p>
+                </div>
+            </a>
+
+            <a href="concept3.html" class="card">
+                <div>
+                    <h2>Concept 3 <span class="arrow">→</span></h2>
+                    <p>Alternative layout structure emphasizing visual media.</p>
+                </div>
+            </a>
+
+            <a href="concept4.html" class="card">
+                <div>
+                    <h2>Concept 4 <span class="arrow">→</span></h2>
+                    <p>Dark mode optimized with glassmorphic elements.</p>
+                </div>
+            </a>
+
+            <a href="concept5.html" class="card">
+                <div>
+                    <h2>Concept 5 <span class="arrow">→</span></h2>
+                    <p>Enhanced interaction patterns and micro-animations.</p>
+                </div>
+            </a>
+
+            <a href="conecpt6.html" class="card">
+                <div>
+                    <h2>Concept 6 <span class="arrow">→</span></h2>
+                    <p>Streamlined variant with minimalistic approach.</p>
+                </div>
+            </a>
+
+            <a href="concept7.html" class="card">
+                <div>
+                    <h2>Concept 7 <span class="arrow">→</span></h2>
+                    <p>Data-dense layout variation for complex views.</p>
+                </div>
+            </a>
+
+            <a href="concept8.html" class="card">
+                <div>
+                    <h2>Concept 8 <span class="arrow">→</span></h2>
+                    <p>Experimenting with alternative navigation patterns.</p>
+                </div>
+            </a>
+
+            <a href="conce.html" class="card">
+                <div>
+                    <h2>Alternative Concept <span class="arrow">→</span></h2>
+                    <p>A fresh take on the overall visual direction.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

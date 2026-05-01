@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreeanCompany — Drive In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #0a0812;
+            color: #f0e6ff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #a78bfa;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor.hover {
+            width: 60px;
+            height: 60px;
+            border-color: #ff8ec7;
+            background: rgba(255, 142, 199, 0.1);
+        }
+
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: #a78bfa;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+        }
+
+        /* Horizontal scroll container */
+        .horizontal-wrapper {
+            display: flex;
+            width: fit-content;
+            height: 100vh;
+        }
+
+        /* Sections */
+        .panel {
+            width: 100vw;
+            height: 100vh;
+            flex-shrink: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Panel 1 — The Ignition */
+        .panel-1 {
+            background: #0a0812;
+        }
+
+        .panel-1::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 50%, rgba(167, 139, 250, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(255, 142, 199, 0.05) 0%, transparent 50%);
+        }
+
+        .ignition-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .ignition-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #a78bfa;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .ignition-label::before,
+        .ignition-label::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #a78bfa);
+        }
+
+        .ignition-label::after {
+            background: linear-gradient(90deg, #a78bfa, transparent);
+        }
+
+        .ignition-h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .ignition-h1 span {
+            display: block;
+        }
+
+        .ignition-h1 .line-1 {
+            background: linear-gradient(135deg, #f0e6ff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ignition-h1 .line-2 {
+            color: transparent;
+            -webkit-text-stroke: 2px #a78bfa;
+            opacity: 0.6;
+        }
+
+        .ignition-sub {
+            font-size: 1.1rem;
+            color: #6b5b8a;
+            max-width: 400px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+        }
+
+        .scroll-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: #5a5470;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .scroll-hint .arrow {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, #a78bfa, transparent);
+        }
+
+        /* Speed lines */
+        .speed-lines {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .speed-lines.active {
+            opacity: 1;
+        }
+
+        .speed-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.3), transparent);
+            animation: speedLine 0.8s linear infinite;
+        }
+
+        /* Panel 2 — The Road */
+        .panel-2 {
+            background: #0f0c18;
+        }
+
+        .road-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            perspective: 1000px;
+        }
+
+        .road {
+            position: absolute;
+            bottom: -20%;
+            left: -50%;
+            right: -50%;
+            height: 100%;
+            background: 
+                linear-gradient(180deg, transparent 0%, rgba(167, 139, 250, 0.03) 100%),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 98px,
+                    rgba(167, 139, 250, 0.15) 98px,
+                    rgba(167, 139, 250, 0.15) 100px
+                );
+            transform: rotateX(60deg);
+            transform-origin: bottom;
+            animation: roadMove 2s linear infinite;
+        }
+
+        .car-silhouette {
+            position: absolute;
+            bottom: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 120px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 120'%3E%3Cpath d='M20 80 Q30 60 60 60 L100 55 Q120 30 180 30 L220 35 Q260 40 280 60 L290 80 Q295 90 280 95 L250 95 Q240 85 220 85 Q200 85 190 95 L110 95 Q100 85 80 85 Q60 85 50 95 L30 95 Q15 90 20 80Z' fill='%231a1625' stroke='%23a78bfa' stroke-width='1.5'/%3E%3Ccircle cx='80' cy='95' r='18' fill='%230a0812' stroke='%23a78bfa' stroke-width='2'/%3E%3Ccircle cx='220' cy='95' r='18' fill='%230a0812' stroke='%23a78bfa' stroke-width='2'/%3E%3C/svg%3E") no-repeat center;
+            background-size: contain;
+            filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.2));
+            animation: carBounce 2s ease-in-out infinite;
+        }
+
+        .headlights {
+            position: absolute;
+            bottom: 38%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            background: 
+                conic-gradient(from 180deg at 30% 0%, rgba(167, 139, 250, 0.15) 0deg, transparent 30deg),
+                conic-gradient(from 180deg at 70% 0%, rgba(167, 139, 250, 0.15) 0deg, transparent 30deg);
+            transform-origin: top;
+            pointer-events: none;
+        }
+
+        .vehicle-showcase {
+            position: absolute;
+            top: 15%;
+            left: 10%;
+            z-index: 2;
+        }
+
+        .vehicle-showcase h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .vehicle-showcase h2 em {
+            color: #a78bfa;
+            font-style: normal;
+        }
+
+        .vehicle-showcase p {
+            color: #6b5b8a;
+            font-size: 1rem;
+            max-width: 350px;
+            line-height: 1.6;
+        }
+
+        .vehicle-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .v-stat {
+            border-left: 1px solid #2d2840;
+            padding-left: 1rem;
+        }
+
+        .v-stat .num {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .v-stat .label {
+            font-size: 0.7rem;
+            color: #5a5470;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Panel 3 — The Fleet (3D Carousel) */
+        .panel-3 {
+            background: #0a0812;
+        }
+
+        .carousel-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 2000px;
+        }
+
+        .carousel {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .carousel-card {
+            position: absolute;
+            width: 340px;
+            height: 440px;
+            left: 30px;
+            top: 30px;
+            background: #161220;
+            border: 1px solid #2d2840;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            backface-visibility: hidden;
+        }
+
+        .carousel-card:hover {
+            border-color: #a78bfa;
+            box-shadow: 0 0 40px rgba(167, 139, 250, 0.15);
+        }
+
+        .carousel-card img {
+            width: 100%;
+            height: 60%;
+            object-fit: cover;
+        }
+
+        .carousel-card-body {
+            padding: 1.5rem;
+        }
+
+        .carousel-card-body h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .carousel-card-body .type {
+            font-size: 0.75rem;
+            color: #5a5470;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .carousel-card-body .price {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #2d2840;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: #a78bfa;
+            border-color: #a78bfa;
+            transform: scale(1.3);
+        }
+
+        .carousel-hint {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .carousel-hint h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .carousel-hint h2 em {
+            color: #a78bfa;
+            font-style: normal;
+        }
+
+        .carousel-hint p {
+            color: #5a5470;
+            font-size: 0.9rem;
+        }
+
+        /* Panel 4 — The Experience (Split Reveal) */
+        .panel-4 {
+            background: #0f0c18;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .exp-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 5vw;
+            position: relative;
+        }
+
+        .exp-left::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            right: 0;
+            width: 1px;
+            height: 60%;
+            background: linear-gradient(to bottom, transparent, #a78bfa, transparent);
+        }
+
+        .exp-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 6rem;
+            font-weight: 800;
+            color: transparent;
+            -webkit-text-stroke: 1px #2d2840;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .exp-left h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 3vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .exp-left h2 em {
+            color: #a78bfa;
+            font-style: normal;
+        }
+
+        .exp-left p {
+            color: #6b5b8a;
+            font-size: 1rem;
+            line-height: 1.7;
+            max-width: 400px;
+        }
+
+        .exp-features {
+            margin-top: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .exp-feature {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #1e1a28;
+            transition: all 0.3s ease;
+        }
+
+        .exp-feature:hover {
+            padding-left: 1rem;
+            border-color: #a78bfa;
+        }
+
+        .exp-feature .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #1e1a28;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .exp-feature:hover .icon {
+            background: #a78bfa;
+        }
+
+        .exp-feature span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .exp-right {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exp-right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7);
+            transition: all 1s ease;
+        }
+
+        .exp-right:hover img {
+            filter: brightness(0.9);
+            transform: scale(1.05);
+        }
+
+        .exp-right-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, #0f0c18 0%, transparent 30%);
+        }
+
+        /* Panel 5 — The CTA (Final) */
+        .panel-5 {
+            background: #0a0812;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .panel-5::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 50% 50%, rgba(167, 139, 250, 0.06) 0%, transparent 60%);
+        }
+
+        .final-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .final-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #a78bfa;
+            margin-bottom: 2rem;
+        }
+
+        .final-h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 800;
+            line-height: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .final-h1 .solid {
+            background: linear-gradient(135deg, #f0e6ff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .final-h1 .outline {
+            color: transparent;
+            -webkit-text-stroke: 2px #a78bfa;
+        }
+
+        .final-sub {
+            color: #6b5b8a;
+            font-size: 1.1rem;
+            max-width: 450px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+        }
+
+        .final-btns {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-glow {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: #a78bfa;
+            color: #0a0812;
+            border: none;
+            padding: 1.2rem 3rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 0 40px rgba(167, 139, 250, 0.3);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 60px rgba(167, 139, 250, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .btn-ghost-final {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #a78bfa;
+            border: 2px solid #a78bfa;
+            padding: 1.2rem 3rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.4s ease;
+        }
+
+        .btn-ghost-final:hover {
+            background: #a78bfa;
+            color: #0a0812;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #1e1a28;
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #a78bfa, #ff8ec7);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Section indicator */
+        .section-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .sec-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2d2840;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sec-dot.active {
+            background: #a78bfa;
+            transform: scale(1.5);
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes speedLine {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100vw); opacity: 0; }
+        }
+
+        @keyframes roadMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 0; }
+        }
+
+        @keyframes carBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+        }
+
+        /* Mobile fallback */
+        @media (max-width: 768px) {
+            body { cursor: auto; overflow-y: auto; }
+            .cursor, .cursor-dot { display: none; }
+            .horizontal-wrapper {
+                flex-direction: column;
+                width: 100%;
+                height: auto;
+            }
+            .panel {
+                width: 100%;
+                min-height: 100vh;
+            }
+            .panel-4 {
+                grid-template-columns: 1fr;
+            }
+            .exp-right { height: 50vh; }
+            .carousel { transform: none !important; }
+            .carousel-card {
+                position: relative;
+                left: 0;
+                top: 0;
+                margin-bottom: 1rem;
+            }
+            .section-dots { display: none; }
+            .final-h1 { font-size: 3rem; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Custom cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- Progress -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <!-- Section dots -->
+    <div class="section-dots">
+        <div class="sec-dot active" data-index="0"></div>
+        <div class="sec-dot" data-index="1"></div>
+        <div class="sec-dot" data-index="2"></div>
+        <div class="sec-dot" data-index="3"></div>
+        <div class="sec-dot" data-index="4"></div>
+    </div>
+
+    <!-- Horizontal scroll wrapper -->
+    <div class="horizontal-wrapper" id="wrapper">
+
+        <!-- Panel 1: Ignition -->
+        <section class="panel panel-1" data-index="0">
+            <div class="speed-lines" id="speedLines"></div>
+            <div class="ignition-content">
+                <div class="ignition-label">ThreeanCompany</div>
+                <h1 class="ignition-h1">
+                    <span class="line-1">DRIVE</span>
+                    <span class="line-2">THE FUTURE</span>
+                </h1>
+                <p class="ignition-sub">Premium vehicle rental reimagined. Scroll to begin your journey.</p>
+                <div class="scroll-hint">
+                    <span>Scroll Horizontally</span>
+                    <div class="arrow"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel 2: The Road -->
+        <section class="panel panel-2" data-index="1">
+            <div class="vehicle-showcase">
+                <h2>150+ Vehicles<br><em>One Standard</em></h2>
+                <p>Every vehicle in our fleet meets rigorous standards for performance, comfort, and presentation.</p>
+                <div class="vehicle-stats">
+                    <div class="v-stat">
+                        <div class="num">150+</div>
+                        <div class="label">Vehicles</div>
+                    </div>
+                    <div class="v-stat">
+                        <div class="num">12K</div>
+                        <div class="label">Clients</div>
+                    </div>
+                    <div class="v-stat">
+                        <div class="num">4.9</div>
+                        <div class="label">Rating</div>
+                    </div>
+                </div>
+            </div>
+            <div class="headlights"></div>
+            <div class="car-silhouette"></div>
+            <div class="road-container">
+                <div class="road"></div>
+            </div>
+        </section>
+
+        <!-- Panel 3: The Fleet (3D Carousel) -->
+        <section class="panel panel-3" data-index="2">
+            <div class="carousel-hint">
+                <h2>Select Your <em>Vehicle</em></h2>
+                <p>Click arrows to browse our featured collection</p>
+            </div>
+            <div class="carousel-container">
+                <div class="carousel" id="carousel">
+                    <div class="carousel-card" style="transform: rotateY(0deg) translateZ(400px);">
+                        <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop" alt="Mercedes">
+                        <div class="carousel-card-body">
+                            <h3>Mercedes S-Class</h3>
+                            <div class="type">Luxury Sedan</div>
+                            <div class="price">$189/day</div>
+                        </div>
+                    </div>
+                    <div class="carousel-card" style="transform: rotateY(120deg) translateZ(400px);">
+                        <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=400&h=300&fit=crop" alt="Range Rover">
+                        <div class="carousel-card-body">
+                            <h3>Range Rover Sport</h3>
+                            <div class="type">Premium SUV</div>
+                            <div class="price">$245/day</div>
+                        </div>
+                    </div>
+                    <div class="carousel-card" style="transform: rotateY(240deg) translateZ(400px);">
+                        <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&h=300&fit=crop" alt="Porsche">
+                        <div class="carousel-card-body">
+                            <h3>Porsche 911</h3>
+                            <div class="type">Sports Coupe</div>
+                            <div class="price">$399/day</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-nav">
+                <div class="carousel-dot active" onclick="rotateCarousel(0)"></div>
+                <div class="carousel-dot" onclick="rotateCarousel(1)"></div>
+                <div class="carousel-dot" onclick="rotateCarousel(2)"></div>
+            </div>
+        </section>
+
+        <!-- Panel 4: The Experience -->
+        <section class="panel panel-4" data-index="3">
+            <div class="exp-left">
+                <div class="exp-num">03</div>
+                <h2>The <em>Experience</em></h2>
+                <p>We don't just hand you keys. We deliver a complete mobility solution tailored to your schedule, preferences, and standards.</p>
+                <div class="exp-features">
+                    <div class="exp-feature">
+                        <div class="icon">◆</div>
+                        <span>Doorstep Delivery — Any Location</span>
+                    </div>
+                    <div class="exp-feature">
+                        <div class="icon">◈</div>
+                        <span>24/7 Concierge Support</span>
+                    </div>
+                    <div class="exp-feature">
+                        <div class="icon">◇</div>
+                        <span>Full Insurance Coverage</span>
+                    </div>
+                    <div class="exp-feature">
+                        <div class="icon">◉</div>
+                        <span>Flexible Cancellation</span>
+                    </div>
+                </div>
+            </div>
+            <div class="exp-right">
+                <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&h=1000&fit=crop&q=80" alt="Driving experience">
+                <div class="exp-right-overlay"></div>
+            </div>
+        </section>
+
+        <!-- Panel 5: The Final -->
+        <section class="panel panel-5" data-index="4">
+            <div class="final-content">
+                <div class="final-label">ThreeanCompany</div>
+                <h1 class="final-h1">
+                    <span class="solid">READY</span><br>
+                    <span class="outline">TO DRIVE?</span>
+                </h1>
+                <p class="final-sub">Your vehicle is waiting. Begin your reservation in under two minutes.</p>
+                <div class="final-btns">
+                    <a href="/vehicles" class="btn-glow">Reserve Now</a>
+                    <a href="#fleet" class="btn-ghost-final">View Fleet</a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 2 + 'px';
+            cursorDot.style.top = e.clientY - 2 + 'px';
+        });
+
+        document.querySelectorAll('a, button, .carousel-card, .exp-feature').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Horizontal scroll
+        const wrapper = document.getElementById('wrapper');
+        const progress = document.getElementById('progress');
+        const dots = document.querySelectorAll('.sec-dot');
+        let currentScroll = 0;
+        let targetScroll = 0;
+
+        window.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            targetScroll += e.deltaY;
+            targetScroll = Math.max(0, Math.min(targetScroll, wrapper.scrollWidth - window.innerWidth));
+        }, { passive: false });
+
+        function animate() {
+            currentScroll += (targetScroll - currentScroll) * 0.08;
+            wrapper.style.transform = `translateX(-${currentScroll}px)`;
+            
+            const progressPercent = (currentScroll / (wrapper.scrollWidth - window.innerWidth)) * 100;
+            progress.style.width = progressPercent + '%';
+
+            // Update dots
+            const panelWidth = window.innerWidth;
+            const activeIndex = Math.round(currentScroll / panelWidth);
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === activeIndex);
+            });
+
+            // Speed lines on panel 1
+            const speedLines = document.getElementById('speedLines');
+            const speed = Math.abs(targetScroll - currentScroll);
+            if (speed > 5 && activeIndex === 0) {
+                speedLines.classList.add('active');
+                if (Math.random() > 0.7) createSpeedLine();
+            } else {
+                speedLines.classList.remove('active');
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        function createSpeedLine() {
+            const line = document.createElement('div');
+            line.className = 'speed-line';
+            line.style.top = Math.random() * 100 + '%';
+            line.style.width = Math.random() * 300 + 100 + 'px';
+            line.style.left = '-400px';
+            document.getElementById('speedLines').appendChild(line);
+            setTimeout(() => line.remove(), 800);
+        }
+
+        // Click dots to navigate
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.dataset.index);
+                targetScroll = index * window.innerWidth;
+            });
+        });
+
+        // 3D Carousel
+        let carouselRotation = 0;
+        function rotateCarousel(index) {
+            carouselRotation = index * -120;
+            document.getElementById('carousel').style.transform = `rotateY(${carouselRotation}deg)`;
+            document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        // Auto-rotate carousel slowly
+        setInterval(() => {
+            carouselRotation -= 0.3;
+            document.getElementById('carousel').style.transform = `rotateY(${carouselRotation}deg)`;
+        }, 50);
+    </script>
+
+</body>
+</html>

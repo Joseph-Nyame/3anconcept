@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreeanCompany — Live Fleet Auction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0a0f;
+            --bg-raised: #15121a;
+            --surface: #1e1a24;
+            --text: #e8e0d4;
+            --text-soft: #8a8278;
+            --text-faint: #4a443c;
+            --gold: #c9a96e;
+            --gold-bright: #e0c28b;
+            --gold-dim: rgba(201, 169, 110, 0.15);
+            --red: #c75b5b;
+            --green: #5b8a6b;
+            --border: #2a2520;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Live ticker */
+        .ticker {
+            background: var(--bg-raised);
+            border-bottom: 1px solid var(--border);
+            padding: 0.6rem 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .ticker-inner {
+            display: inline-block;
+            animation: ticker 20s linear infinite;
+        }
+
+        .ticker-item {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-soft);
+            display: inline-block;
+            padding: 0 2rem;
+        }
+
+        .ticker-item .live {
+            color: var(--red);
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        .ticker-item .up {
+            color: var(--green);
+        }
+
+        /* Nav */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 4vw;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .logo span {
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-soft);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        /* Hero — Auction block */
+        .hero-auction {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            min-height: calc(100vh - 120px);
+        }
+
+        .auction-left {
+            padding: 4rem 4vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--border);
+        }
+
+        .lot-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .lot-number::before {
+            content: 'LOT ';
+        }
+
+        .auction-left h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .auction-left h1 em {
+            font-family: 'Inter', sans-serif;
+            font-style: normal;
+            font-weight: 300;
+            color: var(--text-soft);
+            display: block;
+            font-size: 0.6em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .auction-desc {
+            color: var(--text-soft);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            max-width: 450px;
+            margin-bottom: 2rem;
+        }
+
+        .auction-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .a-meta {
+            text-align: center;
+        }
+
+        .a-meta .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-faint);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .a-meta .value {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--gold);
+        }
+
+        .auction-timer {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .timer-block {
+            background: var(--bg-raised);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .timer-block .num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .timer-block .unit {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-faint);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 0.3rem;
+        }
+
+        .auction-bid {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .bid-btn {
+            flex: 1;
+            background: var(--gold);
+            color: var(--bg);
+            border: none;
+            padding: 1rem 2rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bid-btn:hover {
+            background: var(--gold-bright);
+            transform: translateY(-2px);
+        }
+
+        .watch-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-soft);
+            padding: 1rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .watch-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Right — Vehicle display */
+        .auction-right {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auction-right img {
+            width: 90%;
+            height: 70%;
+            object-fit: cover;
+            filter: sepia(20%) contrast(1.1);
+        }
+
+        .auction-right::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, var(--bg) 100%);
+        }
+
+        .hammer-icon {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: hammer 3s ease-in-out infinite;
+        }
+
+        /* Upcoming lots */
+        .upcoming {
+            padding: 4rem 4vw;
+            border-top: 1px solid var(--border);
+        }
+
+        .upcoming-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .upcoming-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .upcoming-header .count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-faint);
+        }
+
+        .lots-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .lot {
+            background: var(--bg);
+            padding: 1.5rem;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .lot:hover {
+            background: var(--bg-raised);
+        }
+
+        .lot::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .lot:hover::before {
+            transform: scaleX(1);
+        }
+
+        .lot-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .lot-img {
+            width: 100%;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            filter: grayscale(30%) contrast(0.9);
+            transition: all 0.5s ease;
+        }
+
+        .lot:hover .lot-img {
+            filter: grayscale(0%) contrast(1);
+        }
+
+        .lot h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 0.3rem;
+        }
+
+        .lot .lot-type {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            margin-bottom: 1rem;
+        }
+
+        .lot-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--green);
+        }
+
+        .lot-price span {
+            color: var(--text-faint);
+            font-size: 0.75rem;
+        }
+
+        /* Animations */
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes hammer {
+            0%, 100% { transform: rotate(0deg); }
+            10% { transform: rotate(-30deg); }
+            20% { transform: rotate(0deg); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-auction { grid-template-columns: 1fr; }
+            .auction-right { height: 50vh; }
+            .lots-grid { grid-template-columns: 1fr; }
+            .auction-meta { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Live Ticker -->
+    <div class="ticker">
+        <div class="ticker-inner">
+            <span class="ticker-item"><span class="live">● LIVE</span> Lot 001 — Mercedes S-Class — Current Bid: $189 <span class="up">↑</span></span>
+            <span class="ticker-item">Lot 002 — Range Rover Sport — Starting: $245</span>
+            <span class="ticker-item">Lot 003 — Porsche 911 — Starting: $399</span>
+            <span class="ticker-item"><span class="live">● LIVE</span> 12 Active Bidders</span>
+            <span class="ticker-item">Lot 004 — BMW 7 Series — Starting: $210</span>
+            <span class="ticker-item"><span class="live">● LIVE</span> Lot 001 — Mercedes S-Class — Current Bid: $189 <span class="up">↑</span></span>
+            <span class="ticker-item">Lot 002 — Range Rover Sport — Starting: $245</span>
+            <span class="ticker-item">Lot 003 — Porsche 911 — Starting: $399</span>
+            <span class="ticker-item"><span class="live">● LIVE</span> 12 Active Bidders</span>
+            <span class="ticker-item">Lot 004 — BMW 7 Series — Starting: $210</span>
+        </div>
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <div class="logo">Threean<span>Company</span></div>
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>AUCTION IN PROGRESS</span>
+        </div>
+    </nav>
+
+    <!-- Hero Auction -->
+    <section class="hero-auction">
+        <div class="auction-left">
+            <div class="lot-number">001</div>
+            <h1>Mercedes-Benz S-Class <em>Luxury Sedan — 2024</em></h1>
+            <p class="auction-desc">Impeccably maintained executive vehicle. Premium leather interior, ambient lighting, full driver assistance package. Available for immediate reservation.</p>
+            <div class="auction-meta">
+                <div class="a-meta">
+                    <div class="label">Year</div>
+                    <div class="value">2024</div>
+                </div>
+                <div class="a-meta">
+                    <div class="label">Mileage</div>
+                    <div class="value">12K</div>
+                </div>
+                <div class="a-meta">
+                    <div class="label">Condition</div>
+                    <div class="value">Mint</div>
+                </div>
+            </div>
+            <div class="auction-timer" id="timer">
+                <div class="timer-block"><div class="num" id="hours">04</div><div class="unit">Hours</div></div>
+                <div class="timer-block"><div class="num" id="minutes">32</div><div class="unit">Minutes</div></div>
+                <div class="timer-block"><div class="num" id="seconds">18</div><div class="unit">Seconds</div></div>
+            </div>
+            <div class="auction-bid">
+                <button class="bid-btn">Place Reservation — $189</button>
+                <button class="watch-btn">♥ Watch</button>
+            </div>
+        </div>
+        <div class="auction-right">
+            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop" alt="Mercedes">
+            <div class="hammer-icon">🔨</div>
+        </div>
+    </section>
+
+    <!-- Upcoming Lots -->
+    <section class="upcoming">
+        <div class="upcoming-header">
+            <h2>Upcoming Lots</h2>
+            <span class="count">03 VEHICLES</span>
+        </div>
+        <div class="lots-grid">
+            <div class="lot">
+                <div class="lot-num">LOT 002</div>
+                <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=400&h=250&fit=crop" class="lot-img" alt="Range Rover">
+                <h3>Range Rover Sport</h3>
+                <div class="lot-type">Premium SUV — 2023</div>
+                <div class="lot-price">$245 <span>/ day</span></div>
+            </div>
+            <div class="lot">
+                <div class="lot-num">LOT 003</div>
+                <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&h=250&fit=crop" class="lot-img" alt="Porsche">
+                <h3>Porsche 911 Carrera</h3>
+                <div class="lot-type">Sports Coupe — 2024</div>
+                <div class="lot-price">$399 <span>/ day</span></div>
+            </div>
+            <div class="lot">
+                <div class="lot-num">LOT 004</div>
+                <img src="https://images.unsplash.com/photo-1555215695-3004980adade?w=400&h=250&fit=crop" class="lot-img" alt="BMW">
+                <h3>BMW 7 Series</h3>
+                <div class="lot-type">Executive Sedan — 2024</div>
+                <div class="lot-price">$210 <span>/ day</span></div>
+            </div>
+            <div class="lot">
+                <div class="lot-num">LOT 005</div>
+                <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=400&h=250&fit=crop" class="lot-img" alt="Audi">
+                <h3>Audi RS Q8</h3>
+                <div class="lot-type">Performance SUV — 2023</div>
+                <div class="lot-price">$275 <span>/ day</span></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Countdown timer
+        let totalSeconds = 4 * 3600 + 32 * 60 + 18;
+        setInterval(() => {
+            totalSeconds--;
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+            document.getElementById('hours').textContent = String(h).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+        }, 1000);
+    </script>
+
+</body>
+</html>

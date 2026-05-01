@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreeanCompany — Case Files</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Oswald:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper: #e8e4dc;
+            --paper-aged: #d4cfc5;
+            --ink: #1a1a1a;
+            --ink-faint: #5a5a5a;
+            --redact: #1a1a1a;
+            --stamp: #8b2323;
+            --violet-dim: #6b5b8a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--paper);
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+
+        /* Film grain overlay */
+        .grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.08;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Vignette */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.15) 100%);
+        }
+
+        /* Typewriter cursor blink */
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Case file header */
+        .case-header {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 1rem 3vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px double var(--stamp);
+        }
+
+        .case-badge {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .case-badge::before {
+            content: '⚠ ';
+            color: var(--stamp);
+        }
+
+        .case-meta {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.75rem;
+            color: var(--paper-aged);
+        }
+
+        /* Main case board */
+        .case-board {
+            min-height: 100vh;
+            padding: 3rem 3vw;
+            position: relative;
+        }
+
+        .case-board::before {
+            content: '';
+            position: absolute;
+            top: 2rem;
+            left: 3vw;
+            width: 80px;
+            height: 1px;
+            background: var(--stamp);
+        }
+
+        .case-intro {
+            max-width: 700px;
+            margin-bottom: 3rem;
+        }
+
+        .case-intro .label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--stamp);
+            margin-bottom: 1rem;
+        }
+
+        .case-intro h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .case-intro h1 .redacted {
+            background: var(--redact);
+            color: var(--paper);
+            padding: 0 0.5rem;
+            font-size: 0.7em;
+            vertical-align: middle;
+        }
+
+        .case-intro p {
+            font-family: 'Special Elite', cursive;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--ink-faint);
+        }
+
+        .case-intro p::first-letter {
+            font-size: 3rem;
+            float: left;
+            line-height: 1;
+            margin-right: 0.5rem;
+            color: var(--stamp);
+        }
+
+        /* Evidence wall */
+        .evidence-wall {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .evidence {
+            background: var(--paper-aged);
+            border: 1px solid var(--ink-faint);
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .evidence::before {
+            content: 'EVIDENCE';
+            position: absolute;
+            top: -8px;
+            left: 1rem;
+            background: var(--stamp);
+            color: var(--paper);
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            padding: 0.2rem 0.5rem;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .evidence:hover {
+            transform: rotate(-1deg) translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .evidence-photo {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2);
+            margin-bottom: 1rem;
+            border: 1px solid var(--ink-faint);
+        }
+
+        .evidence:hover .evidence-photo {
+            filter: grayscale(0%) contrast(1);
+        }
+
+        .evidence h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .evidence .file-num {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.75rem;
+            color: var(--stamp);
+            margin-bottom: 1rem;
+        }
+
+        .evidence .details {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--ink-faint);
+        }
+
+        .evidence .details .redacted-line {
+            background: var(--redact);
+            display: inline-block;
+            width: 120px;
+            height: 14px;
+            vertical-align: middle;
+        }
+
+        .evidence-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--ink-faint);
+        }
+
+        .evidence-footer .status {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.75rem;
+            color: var(--stamp);
+        }
+
+        .evidence-footer .price {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Stamp animation */
+        .stamp {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 80px;
+            height: 80px;
+            border: 3px solid var(--stamp);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--stamp);
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.2;
+            transform: rotate(-15deg);
+            opacity: 0.8;
+        }
+
+        /* Typewriter section */
+        .typewriter-section {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 5rem 3vw;
+            text-align: center;
+        }
+
+        .typewriter-text {
+            font-family: 'Special Elite', cursive;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .typewriter-text::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+            color: var(--stamp);
+        }
+
+        /* Case closed */
+        .case-closed {
+            padding: 5rem 3vw;
+            text-align: center;
+            border-top: 3px double var(--ink);
+        }
+
+        .case-closed h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+        }
+
+        .case-closed p {
+            font-family: 'Special Elite', cursive;
+            font-size: 1rem;
+            color: var(--ink-faint);
+            margin-bottom: 2rem;
+        }
+
+        .classified-btn {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: var(--stamp);
+            color: var(--paper);
+            border: none;
+            padding: 1.2rem 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .classified-btn:hover {
+            background: var(--ink);
+            color: var(--paper);
+            outline: 2px solid var(--stamp);
+        }
+
+        @media (max-width: 768px) {
+            .evidence-wall { grid-template-columns: 1fr; }
+            .case-header { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grain"></div>
+    <div class="vignette"></div>
+
+    <!-- Case Header -->
+    <div class="case-header">
+        <div class="case-badge">Classified</div>
+        <div class="case-meta">CASE NO. TC-2026-001 | PRIORITY: URGENT | EYES ONLY</div>
+    </div>
+
+    <!-- Case Board -->
+    <section class="case-board">
+        <div class="case-intro">
+            <div class="label">Incident Report</div>
+            <h1>The <span class="redacted">Perfect</span> Getaway <span class="redacted">Vehicle</span></h1>
+            <p>Subject requires immediate access to premium automotive assets. Multiple suspects identified. Each exhibits exceptional performance characteristics. All units currently at large and available for acquisition. Proceed with caution.</p>
+        </div>
+
+        <div class="evidence-wall">
+            <div class="evidence">
+                <div class="stamp">TOP<br>SECRET</div>
+                <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop" class="evidence-photo" alt="Suspect 1">
+                <h3>Suspect: S-Class</h3>
+                <div class="file-num">FILE NO. TC-S-001</div>
+                <div class="details">
+                    German origin. Luxury classification. <span class="redacted-line"></span> horsepower. Last seen transporting executives.
+                </div>
+                <div class="evidence-footer">
+                    <span class="status">● AVAILABLE</span>
+                    <span class="price">$189/DAY</span>
+                </div>
+            </div>
+
+            <div class="evidence">
+                <div class="stamp">TOP<br>SECRET</div>
+                <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=400&h=300&fit=crop" class="evidence-photo" alt="Suspect 2">
+                <h3>Suspect: Range Rover</h3>
+                <div class="file-num">FILE NO. TC-R-002</div>
+                <div class="details">
+                    British origin. SUV classification. <span class="redacted-line"></span> torque. Known for off-road capabilities.
+                </div>
+                <div class="evidence-footer">
+                    <span class="status">● AVAILABLE</span>
+                    <span class="price">$245/DAY</span>
+                </div>
+            </div>
+
+            <div class="evidence">
+                <div class="stamp">TOP<br>SECRET</div>
+                <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&h=300&fit=crop" class="evidence-photo" alt="Suspect 3">
+                <h3>Suspect: 911</h3>
+                <div class="file-num">FILE NO. TC-P-003</div>
+                <div class="details">
+                    German origin. Sports classification. <span class="redacted-line"></span> acceleration. Considered armed and dangerous.
+                </div>
+                <div class="evidence-footer">
+                    <span class="status">● AVAILABLE</span>
+                    <span class="price">$399/DAY</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Typewriter -->
+    <section class="typewriter-section">
+        <div class="typewriter-text" id="typewriter"></div>
+    </section>
+
+    <!-- Case Closed -->
+    <section class="case-closed">
+        <h2>Case Status: Open</h2>
+        <p>Your vehicle is waiting. Acquire before evidence is destroyed.</p>
+        <button class="classified-btn">Access Classified Fleet →</button>
+    </section>
+
+    <script>
+        const text = "Every vehicle in our fleet has been investigated, verified, and cleared for your operation. We don't ask questions. We deliver keys.";
+        let i = 0;
+        function typeWriter() {
+            if (i < text.length) {
+                document.getElementById('typewriter').innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+        setTimeout(typeWriter, 500);
+    </script>
+
+</body>
+</html>

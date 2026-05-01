@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreeanCompany — Premium Vehicle Rental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #121018;
+            --bg-elevated: #181420;
+            --bg-card: #1e1a28;
+            --text: #e8e4f0;
+            --text-soft: #9a94a8;
+            --text-faint: #5a5470;
+            --accent: #a78bfa;
+            --accent-muted: rgba(167, 139, 250, 0.08);
+            --border: #252235;
+            --border-light: #2e2a3e;
+            --rule: #3a3450;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--accent-muted);
+            color: var(--text);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.8rem 6vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.5s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(18, 16, 24, 0.95);
+            backdrop-filter: blur(24px);
+            padding: 1.2rem 6vw;
+            border-bottom-color: var(--border);
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .logo em {
+            font-family: 'Libre Baskerville', serif;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--accent);
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: var(--text-soft);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .nav-center a:hover {
+            color: var(--text);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-phone {
+            font-size: 0.8rem;
+            color: var(--text-faint);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-cta {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text);
+            border: 1px solid var(--border-light);
+            padding: 0.7rem 1.8rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10rem 6vw 6rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 6vw;
+            width: 1px;
+            height: 100%;
+            background: var(--border);
+            opacity: 0.5;
+        }
+
+        .hero-label {
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            margin-bottom: 3rem;
+            margin-left: 3rem;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.5rem, 6vw, 6rem);
+            font-weight: 400;
+            line-height: 1.08;
+            margin-bottom: 2rem;
+            margin-left: 3rem;
+            max-width: 800px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero h1 em {
+            font-family: 'Libre Baskerville', serif;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--accent);
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            color: var(--text-soft);
+            max-width: 480px;
+            line-height: 1.8;
+            font-weight: 300;
+            margin-bottom: 3.5rem;
+            margin-left: 3rem;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-left: 3rem;
+        }
+
+        .btn-solid {
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            padding: 1rem 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-solid:hover {
+            background: var(--accent);
+        }
+
+        .btn-outline {
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            border: 1px solid var(--border);
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .hero-image-wrap {
+            position: absolute;
+            right: 6vw;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42%;
+            max-width: 600px;
+        }
+
+        .hero-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            filter: brightness(0.85) contrast(0.95);
+        }
+
+        .hero-image-caption {
+            font-family: 'Libre Baskerville', serif;
+            font-style: italic;
+            font-size: 0.8rem;
+            color: var(--text-faint);
+            margin-top: 1rem;
+            text-align: right;
+        }
+
+        /* Divider */
+        .rule {
+            height: 1px;
+            background: var(--rule);
+            margin: 0 6vw;
+        }
+
+        .rule-full {
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Statement */
+        .statement {
+            padding: 6rem 6vw;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .statement-rule {
+            width: 40px;
+            height: 1px;
+            background: var(--accent);
+            margin: 0 auto 3rem;
+        }
+
+        .statement-text {
+            font-family: 'Libre Baskerville', serif;
+            font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+            font-weight: 400;
+            line-height: 1.7;
+            font-style: italic;
+            color: var(--text-soft);
+        }
+
+        .statement-text em {
+            color: var(--text);
+            font-style: normal;
+        }
+
+        .statement-author {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-faint);
+        }
+
+        /* Section */
+        .section {
+            padding: 6rem 6vw;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header-pro {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-faint);
+        }
+
+        .section-title-pro {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 500;
+            line-height: 1.15;
+            margin-top: 0.3rem;
+        }
+
+        .section-title-pro em {
+            font-family: 'Libre Baskerville', serif;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--accent);
+        }
+
+        .section-link-pro {
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .section-link-pro:hover {
+            color: var(--accent);
+        }
+
+        /* Vehicles — Professional grid */
+        .vehicles-pro {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: var(--border);
+        }
+
+        .v-pro {
+            background: var(--bg);
+            padding: 2.5rem;
+            cursor: pointer;
+            transition: background 0.4s ease;
+            position: relative;
+        }
+
+        .v-pro:hover {
+            background: var(--bg-card);
+        }
+
+        .v-pro-image {
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .v-pro-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.9);
+            transition: all 0.8s ease;
+        }
+
+        .v-pro:hover .v-pro-image img {
+            filter: brightness(1);
+            transform: scale(1.03);
+        }
+
+        .v-pro-tag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--bg);
+            background: var(--accent);
+            padding: 0.4rem 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .v-pro:hover .v-pro-tag {
+            opacity: 1;
+        }
+
+        .v-pro h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .v-pro .type {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .v-pro-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .v-pro-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .v-pro-price span {
+            font-size: 0.8rem;
+            color: var(--text-faint);
+            font-weight: 400;
+        }
+
+        .v-pro-action {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .v-pro:hover .v-pro-action {
+            color: var(--accent);
+        }
+
+        /* Features — Professional list */
+        .features-pro {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .f-pro {
+            padding: 4rem 3rem;
+            border-right: 1px solid var(--border);
+            transition: background 0.4s ease;
+        }
+
+        .f-pro:last-child {
+            border-right: none;
+        }
+
+        .f-pro:hover {
+            background: var(--bg-card);
+        }
+
+        .f-pro-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--accent);
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .f-pro h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+        }
+
+        .f-pro p {
+            font-size: 0.9rem;
+            color: var(--text-soft);
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* CTA */
+        .cta-pro {
+            padding: 8rem 6vw;
+            text-align: center;
+            background: var(--bg-elevated);
+            position: relative;
+        }
+
+        .cta-pro::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 4rem;
+            background: var(--border);
+        }
+
+        .cta-rule {
+            width: 40px;
+            height: 1px;
+            background: var(--accent);
+            margin: 0 auto 3rem;
+        }
+
+        .cta-pro h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            font-weight: 500;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-pro h2 em {
+            font-family: 'Libre Baskerville', serif;
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .cta-pro p {
+            color: var(--text-soft);
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 4rem 6vw;
+            background: var(--bg-card);
+        }
+
+        .footer-pro {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .footer-brand p {
+            color: var(--text-soft);
+            font-size: 0.9rem;
+            line-height: 1.8;
+            max-width: 320px;
+            font-weight: 300;
+        }
+
+        .footer-col h4 {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            color: var(--text-faint);
+        }
+
+        .footer-col a {
+            display: block;
+            color: var(--text-soft);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col a:hover {
+            color: var(--text);
+        }
+
+        .footer-bottom-pro {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-bottom-pro span {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            letter-spacing: 0.5px;
+        }
+
+        .footer-bottom-pro .legal {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-bottom-pro .legal a {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-bottom-pro .legal a:hover {
+            color: var(--text);
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.15s; }
+        .reveal-delay-2 { transition-delay: 0.3s; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem;
+            }
+            nav.scrolled {
+                padding: 1rem 1.5rem;
+            }
+            .nav-center {
+                display: none;
+            }
+            .nav-phone {
+                display: none;
+            }
+            .hero {
+                padding: 8rem 1.5rem 3rem;
+            }
+            .hero::before {
+                display: none;
+            }
+            .hero h1, .hero-desc, .hero-cta-group, .hero-label {
+                margin-left: 0;
+            }
+            .hero-image-wrap {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                margin-top: 3rem;
+            }
+            .vehicles-pro {
+                grid-template-columns: 1fr;
+            }
+            .features-pro {
+                grid-template-columns: 1fr;
+            }
+            .f-pro {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .section {
+                padding: 4rem 1.5rem;
+            }
+            .footer-pro {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            .footer-bottom-pro {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .statement {
+                padding: 4rem 1.5rem;
+            }
+            .cta-pro {
+                padding: 5rem 1.5rem;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo">Threean<em>Company</em></a>
+        <ul class="nav-center">
+            <li><a href="#fleet">Fleet</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="nav-right">
+            <span class="nav-phone">+1 (555) 234-5678</span>
+            <a href="#fleet" class="nav-cta">Reserve</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-label reveal">Established 2019</div>
+        <h1 class="reveal">Professional mobility<br>services, <em>refined</em>.</h1>
+        <p class="hero-desc reveal reveal-delay-1">
+            ThreeanCompany provides executive vehicle rental solutions for discerning clients. We combine premium automotive selection with operational excellence and unwavering reliability.
+        </p>
+        <div class="hero-cta-group reveal reveal-delay-2">
+            <a href="#fleet" class="btn-solid">View Fleet</a>
+            <a href="#services" class="btn-outline">Our Services</a>
+        </div>
+        <div class="hero-image-wrap reveal">
+            <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=800&h=600&fit=crop&q=80" alt="Executive vehicle" class="hero-image">
+            <div class="hero-image-caption">Executive fleet — S-Class, 2024</div>
+        </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- Statement -->
+    <section class="statement">
+        <div class="statement-rule reveal"></div>
+        <p class="statement-text reveal">
+            "In business and in travel, the quality of your arrival defines the success of your <em>departure</em>."
+        </p>
+        <div class="statement-author reveal">— ThreeanCompany</div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- Fleet -->
+    <section class="section" id="fleet">
+        <div class="section-header-pro reveal">
+            <div>
+                <div class="section-label">The Fleet</div>
+                <h2 class="section-title-pro">Available <em>vehicles</em></h2>
+            </div>
+            <a href="/vehicles" class="section-link-pro">View All →</a>
+        </div>
+        <div class="vehicles-pro">
+            <div class="v-pro reveal">
+                <div class="v-pro-image">
+                    <span class="v-pro-tag">In Stock</span>
+                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=375&fit=crop" alt="Mercedes">
+                </div>
+                <h3>Mercedes-Benz S-Class</h3>
+                <div class="type">Luxury Sedan</div>
+                <div class="v-pro-footer">
+                    <div class="v-pro-price">$189 <span>per day</span></div>
+                    <div class="v-pro-action">Reserve →</div>
+                </div>
+            </div>
+            <div class="v-pro reveal reveal-delay-1">
+                <div class="v-pro-image">
+                    <span class="v-pro-tag">In Stock</span>
+                    <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=600&h=375&fit=crop" alt="Range Rover">
+                </div>
+                <h3>Range Rover Sport</h3>
+                <div class="type">Premium SUV</div>
+                <div class="v-pro-footer">
+                    <div class="v-pro-price">$245 <span>per day</span></div>
+                    <div class="v-pro-action">Reserve →</div>
+                </div>
+            </div>
+            <div class="v-pro reveal reveal-delay-2">
+                <div class="v-pro-image">
+                    <span class="v-pro-tag">In Stock</span>
+                    <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&h=375&fit=crop" alt="Porsche">
+                </div>
+                <h3>Porsche 911 Carrera</h3>
+                <div class="type">Sports Coupe</div>
+                <div class="v-pro-footer">
+                    <div class="v-pro-price">$399 <span>per day</span></div>
+                    <div class="v-pro-action">Reserve →</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rule-full"></div>
+
+    <!-- Services -->
+    <section class="features-pro" id="services">
+        <div class="f-pro reveal">
+            <div class="f-pro-num">01</div>
+            <h3>Fleet Management</h3>
+            <p>Comprehensive vehicle solutions for corporate clients with dedicated account management.</p>
+        </div>
+        <div class="f-pro reveal reveal-delay-1">
+            <div class="f-pro-num">02</div>
+            <h3>Concierge Service</h3>
+            <p>24/7 support team ensuring seamless operations and immediate response to any requirement.</p>
+        </div>
+        <div class="f-pro reveal reveal-delay-2">
+            <div class="f-pro-num">03</div>
+            <h3>Doorstep Delivery</h3>
+            <p>Direct vehicle delivery to any location — airport, office, residence, or event venue.</p>
+        </div>
+        <div class="f-pro reveal">
+            <div class="f-pro-num">04</div>
+            <h3>Full Coverage</h3>
+            <p>Comprehensive insurance and liability protection included with every rental agreement.</p>
+        </div>
+    </section>
+
+    <div class="rule-full"></div>
+
+    <!-- CTA -->
+    <section class="cta-pro" id="contact">
+        <div class="cta-rule reveal"></div>
+        <h2 class="reveal">Begin your <em>reservation</em></h2>
+        <p class="reveal reveal-delay-1">
+            Contact our team to discuss your requirements. We provide tailored solutions for individual and corporate clients.
+        </p>
+        <div class="reveal reveal-delay-2">
+            <a href="/vehicles" class="btn-solid">Contact Us</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-pro">
+            <div class="footer-brand">
+                <a href="#" class="logo">Threean<em>Company</em></a>
+                <p>Premium vehicle rental services for executive and corporate clients. Established 2019.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <a href="#">Executive Rental</a>
+                <a href="#">Corporate Fleet</a>
+                <a href="#">Event Logistics</a>
+                <a href="#">Long-Term Lease</a>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <a href="#">About Us</a>
+                <a href="#">Careers</a>
+                <a href="#">Press</a>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <a href="#">Help Center</a>
+                <a href="#">Contact</a>
+                <a href="#">Insurance</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <a href="#">+1 (555) 234-5678</a>
+                <a href="#">hello@threeancompany.com</a>
+                <a href="#">New York, NY</a>
+            </div>
+        </div>
+        <div class="footer-bottom-pro">
+            <span>© 2026 ThreeanCompany. All rights reserved.</span>
+            <div class="legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        reveals.forEach(el => observer.observe(el));
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+
+</body>
+</html>
