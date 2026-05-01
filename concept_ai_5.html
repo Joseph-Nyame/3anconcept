@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreeanCompany — Premium Vehicle Rental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0c10;
+            --bg-warm: #111118;
+            --surface: #161620;
+            --text: #e8e4f0;
+            --text-soft: #a098b0;
+            --text-faint: #5a5470;
+            --violet: #9b87d4;
+            --violet-soft: rgba(155, 135, 212, 0.12);
+            --violet-glow: rgba(155, 135, 212, 0.06);
+            --line: #252535;
+            --line-subtle: #1e1e2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--violet-soft);
+            color: var(--text);
+        }
+
+        /* Noise texture overlay */
+        .noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 200px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 2rem 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            mix-blend-mode: difference;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .logo em {
+            font-style: italic;
+            font-weight: 300;
+            color: var(--violet);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-soft);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.4s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--violet);
+            border-bottom: 1px solid var(--violet);
+            padding-bottom: 2px;
+            text-decoration: none;
+            transition: all 0.4s ease;
+        }
+
+        .nav-cta:hover {
+            color: var(--text);
+            border-color: var(--text);
+        }
+
+        /* Hero — Asymmetric editorial */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            position: relative;
+        }
+
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8rem 5vw 4rem;
+            position: relative;
+        }
+
+        .hero-left::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 15%;
+            bottom: 15%;
+            width: 1px;
+            background: var(--line);
+        }
+
+        .hero-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--violet);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-label::before {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--violet);
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.5rem, 6vw, 6rem);
+            font-weight: 300;
+            line-height: 1.05;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--violet);
+        }
+
+        .hero-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--text-soft);
+            max-width: 420px;
+            line-height: 1.8;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .btn-main {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: var(--violet);
+            color: var(--bg);
+            border: none;
+            padding: 1.1rem 2.5rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-main:hover {
+            background: var(--text);
+            transform: translateX(4px);
+        }
+
+        .btn-ghost {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.4s ease;
+        }
+
+        .btn-ghost:hover {
+            color: var(--text);
+            gap: 1.2rem;
+        }
+
+        .hero-right {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(30%) contrast(1.1);
+            transition: all 1.2s ease;
+        }
+
+        .hero-right:hover .hero-image {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.03);
+        }
+
+        .hero-image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, var(--bg) 0%, transparent 30%, transparent 70%, var(--bg) 100%),
+                        linear-gradient(180deg, var(--bg) 0%, transparent 20%, transparent 80%, var(--bg) 100%);
+            pointer-events: none;
+        }
+
+        .hero-counter {
+            position: absolute;
+            bottom: 3rem;
+            left: 3rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            color: var(--text-faint);
+        }
+
+        .hero-counter span {
+            color: var(--violet);
+            font-size: 1.2rem;
+        }
+
+        /* Marquee */
+        .marquee {
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            padding: 1.5rem 0;
+            overflow: hidden;
+            background: var(--bg-warm);
+        }
+
+        .marquee-inner {
+            display: flex;
+            gap: 4rem;
+            animation: marquee 25s linear infinite;
+            white-space: nowrap;
+        }
+
+        .marquee-item {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-faint);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .marquee-item::after {
+            content: '◆';
+            color: var(--violet);
+            font-size: 0.5rem;
+        }
+
+        /* Section styling */
+        .section {
+            padding: 10rem 5vw;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .section-header-minimal {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2rem;
+            align-items: end;
+            margin-bottom: 5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .section-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            color: var(--violet);
+            text-transform: uppercase;
+        }
+
+        .section-title-minimal {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 300;
+            line-height: 1.1;
+            margin-top: 0.5rem;
+        }
+
+        .section-title-minimal em {
+            font-style: italic;
+            color: var(--violet);
+        }
+
+        .section-link {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            text-decoration: none;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .section-link:hover {
+            color: var(--text);
+            border-color: var(--violet);
+        }
+
+        /* Vehicles — Horizontal scroll cards */
+        .vehicles-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--line);
+        }
+
+        .vehicle-item {
+            background: var(--bg);
+            padding: 3rem;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vehicle-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--violet);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .vehicle-item:hover {
+            background: var(--surface);
+        }
+
+        .vehicle-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .vehicle-img-wrap {
+            width: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .vehicle-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%);
+            transition: all 0.8s ease;
+        }
+
+        .vehicle-item:hover .vehicle-img-wrap img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+
+        .vehicle-img-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--violet-glow);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .vehicle-item:hover .vehicle-img-wrap::after {
+            opacity: 1;
+        }
+
+        .vehicle-item h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 0.3rem;
+        }
+
+        .vehicle-item .type {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .vehicle-item .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line-subtle);
+        }
+
+        .vehicle-item .price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .vehicle-item .price span {
+            font-size: 0.75rem;
+            color: var(--text-faint);
+            font-weight: 400;
+        }
+
+        .vehicle-item .reserve {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            transition: color 0.3s ease;
+        }
+
+        .vehicle-item:hover .reserve {
+            color: var(--violet);
+        }
+
+        /* Features — Numbered list */
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--line);
+        }
+
+        .feature-item {
+            background: var(--bg);
+            padding: 4rem;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .feature-item:hover {
+            background: var(--surface);
+        }
+
+        .feature-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 300;
+            color: var(--violet);
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-item h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item p {
+            font-size: 0.9rem;
+            color: var(--text-soft);
+            line-height: 1.8;
+            font-weight: 300;
+            max-width: 400px;
+        }
+
+        /* Large CTA */
+        .cta-large {
+            padding: 12rem 5vw;
+            text-align: center;
+            position: relative;
+            background: var(--bg-warm);
+        }
+
+        .cta-large::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 6rem;
+            background: var(--line);
+        }
+
+        .cta-large h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+        }
+
+        .cta-large h2 em {
+            font-style: italic;
+            color: var(--violet);
+        }
+
+        .cta-large p {
+            color: var(--text-soft);
+            max-width: 500px;
+            margin: 0 auto 3rem;
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        .cta-line {
+            width: 60px;
+            height: 1px;
+            background: var(--violet);
+            margin: 0 auto 3rem;
+        }
+
+        /* Footer — Minimal */
+        footer {
+            border-top: 1px solid var(--line);
+            padding: 4rem 5vw;
+        }
+
+        .footer-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .footer-brand p {
+            color: var(--text-faint);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            max-width: 320px;
+            font-weight: 300;
+        }
+
+        .footer-col h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            color: var(--violet);
+        }
+
+        .footer-col a {
+            display: block;
+            color: var(--text-faint);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col a:hover {
+            color: var(--text);
+        }
+
+        .footer-bottom-bar {
+            max-width: 1600px;
+            margin: 4rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--line-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-faint);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        /* Animations */
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeRight {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+            .hero-left {
+                padding: 6rem 1.5rem 3rem;
+            }
+            .hero-left::after {
+                display: none;
+            }
+            .hero-right {
+                height: 50vh;
+            }
+            .nav-links {
+                display: none;
+            }
+            .vehicles-row,
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+            .section {
+                padding: 5rem 1.5rem;
+            }
+            .section-header-minimal {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .feature-item {
+                padding: 2.5rem;
+            }
+            .footer-inner {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .marquee-inner {
+                animation-duration: 15s;
+            }
+        }
+    
+        :root {
+            --bg: #ffffff;
+            --bg-warm: #f0f0f0;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-soft: #333333;
+            --text-faint: #666666;
+            --violet: #ff0000; /* Pure Red */
+            --violet-soft: rgba(255, 0, 0, 0.12);
+            --violet-glow: rgba(255, 0, 0, 0.06);
+            --line: #000000;
+            --line-subtle: #cccccc;
+        }
+        * { border-radius: 0 !important; }
+        .vehicle-item { border: 2px solid #000; }
+        .btn-main { background: #000; color: #fff; }
+        .btn-main:hover { background: #ff0000; color: #fff; }
+        h1, h2, h3 { text-transform: uppercase; font-family: 'Space Grotesk', sans-serif !important; letter-spacing: -2px; }
+        
+</style>
+<base target="_blank">
+</head>
+<body>
+
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">Threean<em>Company</em></a>
+        <ul class="nav-links">
+            <li><a href="#fleet">Fleet</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+        <a href="#fleet" class="nav-cta">Reserve</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-left">
+            <div class="hero-label">Est. 2019</div>
+            <h1 class="reveal">Premium<br>mobility,<br><em>redefined</em>.</h1>
+            <p class="hero-desc reveal reveal-delay-1">
+                A curated collection of the world's finest vehicles, delivered with white-glove precision. For those who understand that the journey matters as much as the destination.
+            </p>
+            <div class="hero-cta-group reveal reveal-delay-2">
+                <a href="#fleet" class="btn-main">Explore Fleet</a>
+                <a href="#experience" class="btn-ghost">Our Story →</a>
+            </div>
+        </div>
+        <div class="hero-right">
+            <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=1200&h=900&fit=crop&q=80" alt="Luxury vehicle" class="hero-image">
+            <div class="hero-image-overlay"></div>
+            <div class="hero-counter">01 / <span>03</span></div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee">
+        <div class="marquee-inner">
+            <span class="marquee-item">Mercedes S-Class</span>
+            <span class="marquee-item">Range Rover Sport</span>
+            <span class="marquee-item">Porsche 911</span>
+            <span class="marquee-item">BMW 7 Series</span>
+            <span class="marquee-item">Audi RS Q8</span>
+            <span class="marquee-item">Lexus LX</span>
+            <span class="marquee-item">Mercedes S-Class</span>
+            <span class="marquee-item">Range Rover Sport</span>
+            <span class="marquee-item">Porsche 911</span>
+            <span class="marquee-item">BMW 7 Series</span>
+            <span class="marquee-item">Audi RS Q8</span>
+            <span class="marquee-item">Lexus LX</span>
+        </div>
+    </div>
+
+    <!-- Fleet -->
+    <section class="section" id="fleet">
+        <div class="section-header-minimal reveal">
+            <div>
+                <div class="section-num">01 — Fleet</div>
+                <h2 class="section-title-minimal">Featured <em>vehicles</em></h2>
+            </div>
+            <a href="/vehicles" class="section-link">View All →</a>
+        </div>
+        <div class="vehicles-row">
+            <div class="vehicle-item reveal">
+                <div class="vehicle-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop&q=80" alt="Mercedes">
+                </div>
+                <h3>Mercedes S-Class</h3>
+                <div class="type">Luxury Sedan</div>
+                <div class="price-row">
+                    <div class="price">$189 <span>/ day</span></div>
+                    <div class="reserve">Reserve →</div>
+                </div>
+            </div>
+            <div class="vehicle-item reveal reveal-delay-1">
+                <div class="vehicle-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1503376763036-066120622c74?w=800&h=600&fit=crop&q=80" alt="Range Rover">
+                </div>
+                <h3>Range Rover Sport</h3>
+                <div class="type">Premium SUV</div>
+                <div class="price-row">
+                    <div class="price">$245 <span>/ day</span></div>
+                    <div class="reserve">Reserve →</div>
+                </div>
+            </div>
+            <div class="vehicle-item reveal reveal-delay-2">
+                <div class="vehicle-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=600&fit=crop&q=80" alt="Porsche">
+                </div>
+                <h3>Porsche 911</h3>
+                <div class="type">Sports Coupe</div>
+                <div class="price-row">
+                    <div class="price">$399 <span>/ day</span></div>
+                    <div class="reserve">Reserve →</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="section" id="experience" style="background: var(--bg-warm); margin: 0; max-width: none; padding: 10rem 5vw;">
+        <div class="section-header-minimal reveal" style="max-width: 1600px; margin: 0 auto 5rem;">
+            <div>
+                <div class="section-num">02 — Experience</div>
+                <h2 class="section-title-minimal">Why we are <em>different</em></h2>
+            </div>
+        </div>
+        <div class="features-list" style="max-width: 1600px; margin: 0 auto;">
+            <div class="feature-item reveal">
+                <div class="feature-num">01</div>
+                <h3>Curated Selection</h3>
+                <p>Every vehicle is hand-picked from the world's finest marques. We don't do ordinary — only exceptional.</p>
+            </div>
+            <div class="feature-item reveal reveal-delay-1">
+                <div class="feature-num">02</div>
+                <h3>Seamless Digital</h3>
+                <p>Book in under two minutes. Digital check-in, keyless entry, and instant confirmation — zero friction.</p>
+            </div>
+            <div class="feature-item reveal">
+                <div class="feature-num">03</div>
+                <h3>Doorstep Delivery</h3>
+                <p>We bring the vehicle to you. Airport, hotel, or residence — wherever you are, we arrive.</p>
+            </div>
+            <div class="feature-item reveal reveal-delay-1">
+                <div class="feature-num">04</div>
+                <h3>Always Available</h3>
+                <p>24/7 concierge support and roadside assistance. Because peace of mind is part of the package.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-large">
+        <div class="cta-line reveal"></div>
+        <h2 class="reveal">Begin your <em>journey</em></h2>
+        <p class="reveal reveal-delay-1">Join a community of discerning travelers who choose ThreeanCompany for their most important journeys.</p>
+        <div class="reveal reveal-delay-2">
+            <a href="/vehicles" class="btn-main">Browse Full Fleet</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="#" class="logo">Threean<em>Company</em></a>
+                <p>Premium vehicle rental for the modern traveler. Curated fleet, seamless technology, white-glove service.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigate</h4>
+                <a href="#">Fleet</a>
+                <a href="#">Experience</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <a href="#">Insurance</a>
+            </div>
+            <div class="footer-col">
+                <h4>Social</h4>
+                <a href="#">Instagram</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <span>© 2026 ThreeanCompany</span>
+            <span>All rights reserved</span>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll reveal
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+        revealElements.forEach(el => observer.observe(el));
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Parallax on hero image
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroImg = document.querySelector('.hero-image');
+            if (heroImg && scrolled < window.innerHeight) {
+                heroImg.style.transform = `translateY(${scrolled * 0.15}px) scale(1.03)`;
+            }
+        });
+    </script>
+
+</body>
+</html>
